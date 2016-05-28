@@ -3,16 +3,12 @@
 
 #include <string>
 #include <netdb.h>
-#include <stream/stream.h>
 #include <io/descriptor.h>
 
-class Socket : public Stream, public Descriptor {
+class Socket : public Descriptor {
 public:
     Socket();
     Socket(int descriptor);
-
-    int getDescriptor() const;
-    void destroy();
 
     void setPort(int port);
     void setHost(std::string host);
@@ -23,16 +19,7 @@ public:
     void startListening();
     Socket acceptConnection();
 
-    bool operator==(const Descriptor &rhs) const;
-    bool operator!=(const Descriptor &rhs) const;
-    bool operator<(const Descriptor &rhs) const;
-    bool operator>(const Descriptor &rhs) const;
-
-    size_t getChunk(void *buffer, size_t bufferSize) const;
-    void sendChunk(const void *buffer, size_t bufferSize) const;
-
 private:
-    int descriptor;
     int port;
 
     struct addrinfo *address;

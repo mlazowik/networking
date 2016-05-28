@@ -6,7 +6,7 @@
 
 #include "socket.h"
 
-Socket::Socket() {
+Socket::Socket() : Descriptor(-1) {
     this->descriptor = socket(PF_INET, SOCK_STREAM, 0);
 
     if (this->descriptor < 0) {
@@ -14,13 +14,7 @@ Socket::Socket() {
     }
 }
 
-int Socket::getDescriptor() const {
-    return this->descriptor;
-}
-
-Socket::Socket(int descriptor) {
-    this->descriptor = descriptor;
-}
+Socket::Socket(int descriptor) : Descriptor(descriptor) { }
 
 void Socket::setPort(int port) {
     this->port = port;
@@ -79,48 +73,4 @@ Socket Socket::acceptConnection() {
     }
 
     return Socket(connectionDescriptor);
-}
-
-void Socket::destroy() {
-    if (close(this->descriptor) < 0) {
-        throw std::system_error(errno, std::system_category());
-    }
-}
-
-size_t Socket::getChunk(void *buffer, size_t bufferSize) const {
-    ssize_t len = read(this->getDescriptor(), buffer, bufferSize);
-
-    if (len < 0) {
-        throw std::system_error(errno, std::system_category());
-    }
-
-    return (size_t)len;
-}
-
-void Socket::sendChunk(const void *buffer, size_t bufferSize) const {
-    ssize_t len = write(this->getDescriptor(), buffer, bufferSize);
-
-    if (len < 0) {
-        throw std::system_error(errno, std::system_category());
-    }
-
-    if ((size_t)len != bufferSize) {
-        throw std::runtime_error("partial write");
-    }
-}
-
-bool Socket::operator==(const Descriptor &rhs) const {
-    return this->getDescriptor() == rhs.getDescriptor();
-}
-
-bool Socket::operator!=(const Descriptor &rhs) const {
-    return !(*this == rhs);
-}
-
-bool Socket::operator<(const Descriptor &rhs) const {
-    return this->getDescriptor() < rhs.getDescriptor();
-}
-
-bool Socket::operator>(const Descriptor &rhs) const {
-    return !(*this < rhs || *this == rhs);
 }
