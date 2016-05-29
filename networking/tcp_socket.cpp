@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <cstring>
 
-#include "socket.h"
+#include "tcp_socket.h"
 
-Socket::Socket() : Descriptor(-1) {
+TCPSocket::TCPSocket() : Descriptor(-1) {
     this->descriptor = socket(PF_INET, SOCK_STREAM, 0);
 
     if (this->descriptor < 0) {
@@ -14,13 +14,13 @@ Socket::Socket() : Descriptor(-1) {
     }
 }
 
-Socket::Socket(int descriptor) : Descriptor(descriptor) { }
+TCPSocket::TCPSocket(int descriptor) : Descriptor(descriptor) { }
 
-void Socket::setPort(int port) {
+void TCPSocket::setPort(int port) {
     this->port = port;
 }
 
-void Socket::setHost(std::string host) {
+void TCPSocket::setHost(std::string host) {
     struct addrinfo hints;
 
     memset(&hints, 0, sizeof(struct addrinfo));
@@ -42,13 +42,13 @@ void Socket::setHost(std::string host) {
     }
 }
 
-void Socket::connect() {
+void TCPSocket::connect() {
     if (::connect(this->descriptor, address->ai_addr, address->ai_addrlen) != 0) {
         throw std::system_error(errno, std::system_category());
     }
 }
 
-void Socket::bindToAddress() {
+void TCPSocket::bindToAddress() {
     struct sockaddr_in address;
 
     address.sin_family = AF_INET;
@@ -60,11 +60,11 @@ void Socket::bindToAddress() {
     }
 }
 
-void Socket::startListening() {
+void TCPSocket::startListening() {
     listen(this->descriptor, this->BACKLOG_QUEUE_LENGTH);
 }
 
-Socket Socket::acceptConnection() {
+TCPSocket TCPSocket::acceptConnection() {
     int connectionDescriptor = accept(this->descriptor, (struct sockaddr*)0,
                                (socklen_t*)0);
 
@@ -72,5 +72,5 @@ Socket Socket::acceptConnection() {
         throw std::system_error(errno, std::system_category());
     }
 
-    return Socket(connectionDescriptor);
+    return TCPSocket(connectionDescriptor);
 }

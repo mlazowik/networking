@@ -5,10 +5,10 @@
 #include <netdb.h>
 #include <io/descriptor.h>
 
-class Socket : public Descriptor {
+class TCPSocket : public Descriptor {
 public:
-    Socket();
-    Socket(int descriptor);
+    TCPSocket();
+    TCPSocket(int descriptor);
 
     void setPort(int port);
     void setHost(std::string host);
@@ -17,7 +17,7 @@ public:
 
     void bindToAddress();
     void startListening();
-    Socket acceptConnection();
+    TCPSocket acceptConnection();
 
 private:
     int port;

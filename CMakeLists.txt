@@ -8,8 +8,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 add_subdirectory(${PROJECT_SOURCE_DIR}/lib/io)
 
 set(SOURCE_FILES
-    networking/socket.cpp
-    networking/socket.h)
+        networking/tcp_socket.cpp
+        networking/tcp_socket.h networking/udp_socket.cpp networking/udp_socket.h)
 
 add_library(networking ${SOURCE_FILES})
 
